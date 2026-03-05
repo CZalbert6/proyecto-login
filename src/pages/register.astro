@@ -1,81 +1,106 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from '../layout/layout.astro';
 const backendUrl = 'https://proyecto-login-production.up.railway.app';
 ---
 
 <Layout>
+  <div style="max-width: 400px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px;">
+    <h2 style="text-align: center; margin-bottom: 2rem;">Registro</h2>
 
-<div style="max-width:400px;margin:auto">
+    <form id="registerForm">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem;">Email</label>
+        <input type="email" id="email" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px;">
+      </div>
 
-<h2>Registro</h2>
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem;">Usuario</label>
+        <input type="text" id="username" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px;">
+      </div>
 
-<form id="registerForm">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem;">Nombre</label>
+        <input type="text" id="nombre" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px;">
+      </div>
 
-<input type="email" id="email" placeholder="Email">
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem;">Contraseña</label>
+        <input type="password" id="password" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 5px;">
+      </div>
 
-<input type="text" id="username" placeholder="Usuario">
+      <button type="submit" style="width: 100%; padding: 1rem; background: #48bb78; color: white; border: none; border-radius: 5px; cursor: pointer;">Registrarse</button>
+    </form>
 
-<input type="text" id="nombre" placeholder="Nombre">
+    <div id="message" style="display:none; margin-top: 1rem; padding: 1rem; border-radius: 5px;"></div>
+    
+    <p style="text-align: center; margin-top: 1rem;">
+      ¿Ya tienes cuenta? <a href="/proyecto-login/login">Inicia sesión</a>
+    </p>
+  </div>
 
-<input type="password" id="password" placeholder="Password" required>
+  <script>
+    const API_URL = "https://proyecto-login-production.up.railway.app";
 
-<button type="submit">Registrarse</button>
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-</form>
+      const email = document.getElementById("email").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const nombre = document.getElementById("nombre").value.trim();
+      const password = document.getElementById("password").value;
+      const messageDiv = document.getElementById('message');
 
-</div>
+      if (!email && !username) {
+        messageDiv.style.display = 'block';
+        messageDiv.style.background = '#f8d7da';
+        messageDiv.style.color = '#721c24';
+        messageDiv.textContent = 'Email o usuario requerido';
+        return;
+      }
 
-<script>
+      if (password.length < 6) {
+        messageDiv.style.display = 'block';
+        messageDiv.style.background = '#f8d7da';
+        messageDiv.style.color = '#721c24';
+        messageDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+        return;
+      }
 
-const API_URL="https://proyecto-login-production.up.railway.app";
+      const requestData = { password };
+      if (email) requestData.email = email;
+      if (username) requestData.username = username;
+      if (nombre) requestData.nombre = nombre;
 
-document.getElementById("registerForm").addEventListener("submit",async(e)=>{
+      try {
+        const response = await fetch(`${API_URL}/api/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestData)
+        });
 
-e.preventDefault();
+        const data = await response.json();
 
-const email=document.getElementById("email").value.trim();
-const username=document.getElementById("username").value.trim();
-const nombre=document.getElementById("nombre").value.trim();
-const password=document.getElementById("password").value;
-
-const requestData={password};
-
-if(email) requestData.email=email;
-if(username) requestData.username=username;
-if(nombre) requestData.nombre=nombre;
-
-try{
-
-const response=await fetch(`${API_URL}/api/register`,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(requestData)
-});
-
-const data=await response.json();
-
-if(data.success){
-
-alert("Registro exitoso");
-
-window.location.href="/login";
-
-}else{
-
-alert(data.message);
-
-}
-
-}catch(error){
-
-alert("Error conexión");
-
-}
-
-});
-
-</script>
-
+        if (data.success) {
+          messageDiv.style.display = 'block';
+          messageDiv.style.background = '#d4edda';
+          messageDiv.style.color = '#155724';
+          messageDiv.textContent = '✅ Registro exitoso. Redirigiendo...';
+          
+          setTimeout(() => {
+            window.location.href = "/proyecto-login/login";
+          }, 1500);
+        } else {
+          messageDiv.style.display = 'block';
+          messageDiv.style.background = '#f8d7da';
+          messageDiv.style.color = '#721c24';
+          messageDiv.textContent = data.message || 'Error en registro';
+        }
+      } catch (error) {
+        messageDiv.style.display = 'block';
+        messageDiv.style.background = '#f8d7da';
+        messageDiv.style.color = '#721c24';
+        messageDiv.textContent = 'Error de conexión';
+      }
+    });
+  </script>
 </Layout>

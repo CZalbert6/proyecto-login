@@ -1,5 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from '../layout/layout.astro';  // ← Ruta CORRECTA (sin espacios)
 ---
 
 <Layout>
@@ -7,8 +7,8 @@ import Layout from '../layouts/Layout.astro';
     <h1 style="font-size: 3rem; margin-bottom: 1rem;">Bienvenido</h1>
     <p style="font-size: 1.2rem; color: #666; margin-bottom: 2rem;">Sistema de autenticación completo</p>
     <div style="display: flex; gap: 1rem; justify-content: center;">
-      <a href="/login" style="padding: 1rem 2rem; background: #667eea; color: white; text-decoration: none; border-radius: 5px;">Iniciar Sesión</a>
-      <a href="/register" style="padding: 1rem 2rem; background: #48bb78; color: white; text-decoration: none; border-radius: 5px;">Registrarse</a>
+      <a href="/proyecto-login/login" style="padding: 1rem 2rem; background: #667eea; color: white; text-decoration: none; border-radius: 5px;">Iniciar Sesión</a>
+      <a href="/proyecto-login/register" style="padding: 1rem 2rem; background: #48bb78; color: white; text-decoration: none; border-radius: 5px;">Registrarse</a>
     </div>
   </section>
 </Layout>
